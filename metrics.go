@@ -3,8 +3,10 @@ package main
 import (
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
+	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/load"
 	"github.com/shirou/gopsutil/mem"
+	"github.com/shirou/gopsutil/net"
 )
 
 func generateMetric(name string, value float64, dimension_name string, dimension_value string) Metric {
@@ -34,18 +36,17 @@ func getLoadMetrics() ([]Metric, error) {
 	return ret, nil
 }
 
-// func getUptime() (Values, error) {
-// 	uptime, err := host.Uptime()
-//   if err != nil {
-//     return nil, err
-//   }
-//
-//   ret := map[string]float64 {
-//     "uptime": float64(uptime)
-//   }
-//
-//   return ret
-// }
+func getUptime() ([]Metric, error) {
+	uptime, err := host.Uptime()
+	if err != nil {
+		return nil, err
+	}
+
+	ret := []Metric{}
+	ret = append(ret, generateMetric("uptime", float64(uptime), "uptime", "uptime"))
+
+	return ret, nil
+}
 
 func getCPUMetrics() ([]Metric, error) {
 	cpus, err := cpu.Times(true)
@@ -55,17 +56,17 @@ func getCPUMetrics() ([]Metric, error) {
 
 	ret := []Metric{}
 	for _, c := range cpus {
-		ret = append(ret, generateMetric("cpu", c.User, "cpu"+c.CPU, "cpu."+c.CPU+".user"))
-		ret = append(ret, generateMetric("cpu", c.System, "cpu"+c.CPU, "cpu."+c.CPU+".system"))
-		ret = append(ret, generateMetric("cpu", c.Idle, "cpu"+c.CPU, "cpu."+c.CPU+".idle"))
-		ret = append(ret, generateMetric("cpu", c.Nice, "cpu"+c.CPU, "cpu."+c.CPU+".nice"))
-		ret = append(ret, generateMetric("cpu", c.Iowait, "cpu"+c.CPU, "cpu."+c.CPU+".iowait"))
-		ret = append(ret, generateMetric("cpu", c.Irq, "cpu"+c.CPU, "cpu."+c.CPU+".irq"))
-		ret = append(ret, generateMetric("cpu", c.Softirq, "cpu"+c.CPU, "cpu."+c.CPU+".softirq"))
-		ret = append(ret, generateMetric("cpu", c.Steal, "cpu"+c.CPU, "cpu."+c.CPU+".steal"))
-		ret = append(ret, generateMetric("cpu", c.Guest, "cpu"+c.CPU, "cpu."+c.CPU+".guest"))
-		ret = append(ret, generateMetric("cpu", c.GuestNice, "cpu"+c.CPU, "cpu."+c.CPU+".guestnice"))
-		ret = append(ret, generateMetric("cpu", c.Stolen, "cpu"+c.CPU, "cpu."+c.CPU+".stolen"))
+		ret = append(ret, generateMetric("cpu", c.User, "cpu."+c.CPU, "cpu."+c.CPU+".user"))
+		ret = append(ret, generateMetric("cpu", c.System, "cpu."+c.CPU, "cpu."+c.CPU+".system"))
+		ret = append(ret, generateMetric("cpu", c.Idle, "cpu."+c.CPU, "cpu."+c.CPU+".idle"))
+		ret = append(ret, generateMetric("cpu", c.Nice, "cpu."+c.CPU, "cpu."+c.CPU+".nice"))
+		ret = append(ret, generateMetric("cpu", c.Iowait, "cpu."+c.CPU, "cpu."+c.CPU+".iowait"))
+		ret = append(ret, generateMetric("cpu", c.Irq, "cpu."+c.CPU, "cpu."+c.CPU+".irq"))
+		ret = append(ret, generateMetric("cpu", c.Softirq, "cpu."+c.CPU, "cpu."+c.CPU+".softirq"))
+		ret = append(ret, generateMetric("cpu", c.Steal, "cpu."+c.CPU, "cpu."+c.CPU+".steal"))
+		ret = append(ret, generateMetric("cpu", c.Guest, "cpu."+c.CPU, "cpu."+c.CPU+".guest"))
+		ret = append(ret, generateMetric("cpu", c.GuestNice, "cpu."+c.CPU, "cpu."+c.CPU+".guestnice"))
+		ret = append(ret, generateMetric("cpu", c.Stolen, "cpu."+c.CPU, "cpu."+c.CPU+".stolen"))
 	}
 
 	return ret, nil
@@ -92,6 +93,28 @@ func getMemoryMetics() ([]Metric, error) {
 	return ret, nil
 }
 
+func getNetworkMetrics() ([]Metric, error) {
+	network, err := net.IOCounters(true)
+	if err != nil {
+		return nil, err
+	}
+
+	ret := []Metric{}
+
+	for _, n := range network {
+		ret = append(ret, generateMetric("network", float64(n.BytesRecv), "network."+n.Name, "network."+n.Name+".bytes_recv"))
+		ret = append(ret, generateMetric("network", float64(n.BytesSent), "network."+n.Name, "network."+n.Name+".bytes_sent"))
+		ret = append(ret, generateMetric("network", float64(n.Dropin), "network."+n.Name, "network."+n.Name+".dropin"))
+		ret = append(ret, generateMetric("network", float64(n.Dropout), "network."+n.Name, "network."+n.Name+".dropout"))
+		ret = append(ret, generateMetric("network", float64(n.Errin), "network."+n.Name, "network."+n.Name+".errin"))
+		ret = append(ret, generateMetric("network", float64(n.Errout), "network."+n.Name, "network."+n.Name+".errout"))
+		ret = append(ret, generateMetric("network", float64(n.Fifoin), "network."+n.Name, "network."+n.Name+".fifoin"))
+		ret = append(ret, generateMetric("network", float64(n.Fifoout), "network."+n.Name, "network."+n.Name+".fifoout"))
+	}
+
+	return ret, nil
+}
+
 func getDiskMetrics() ([]Metric, error) {
 	disks, err := disk.Partitions(false)
 	if err != nil {
@@ -103,10 +126,10 @@ func getDiskMetrics() ([]Metric, error) {
 
 	for _, d := range disks {
 		metric, _ := disk.Usage(d.Mountpoint)
-		ret = append(ret, generateMetric("disk", float64(metric.Total), "disk"+d.Device, "disk."+d.Device+".total"))
-		ret = append(ret, generateMetric("disk", float64(metric.Free), "disk"+d.Device, "disk."+d.Device+".free"))
-		ret = append(ret, generateMetric("disk", float64(metric.Used), "disk"+d.Device, "disk."+d.Device+".used"))
-		ret = append(ret, generateMetric("disk", float64(metric.UsedPercent), "disk"+d.Device, "disk."+d.Device+".percent"))
+		ret = append(ret, generateMetric("disk", float64(metric.Total), "disk."+d.Device, "disk."+d.Device+".total"))
+		ret = append(ret, generateMetric("disk", float64(metric.Free), "disk."+d.Device, "disk."+d.Device+".free"))
+		ret = append(ret, generateMetric("disk", float64(metric.Used), "disk."+d.Device, "disk."+d.Device+".used"))
+		ret = append(ret, generateMetric("disk", float64(metric.UsedPercent), "disk."+d.Device, "disk."+d.Device+".percent"))
 	}
 
 	return ret, nil

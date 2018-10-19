@@ -8,8 +8,6 @@ import (
 	"net/http"
 	"os"
 	"strings"
-
-	"github.com/k0kubun/pp"
 )
 
 var (
@@ -34,23 +32,34 @@ func main() {
 	}
 	metric := append(mem, cpu...)
 
-	// disk, err := getDiskMetrics()
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// metric = append(metric, disk...)
-	//
-	// load, err := getLoadMetrics()
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// metric = append(metric, load...)
+	disk, err := getDiskMetrics()
+	if err != nil {
+		panic(err)
+	}
+	metric = append(metric, disk...)
+
+	load, err := getLoadMetrics()
+	if err != nil {
+		panic(err)
+	}
+	metric = append(metric, load...)
+
+	network, err := getNetworkMetrics()
+	if err != nil {
+		panic(err)
+	}
+	metric = append(metric, network...)
+
+	uptime, err := getUptime()
+	if err != nil {
+		panic(err)
+	}
+	metric = append(metric, uptime...)
+
 	data := &Payload{
 		Namespace: namespace,
 		Data:      metric,
 	}
-
-	pp.Println(data)
 
 	payload, err := json.Marshal(data)
 	if err != nil {
@@ -66,7 +75,10 @@ func main() {
 	res, _ := http.DefaultClient.Do(req)
 
 	defer res.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
+	_, err = ioutil.ReadAll(res.Body)
+	if err != nil {
+		panic(err)
+	}
 
-	fmt.Println(string(body))
+	fmt.Println("done")
 }
