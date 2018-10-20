@@ -22,6 +22,13 @@ func generateMetric(name string, value float64, dimensionname string, dimensionv
 	}
 }
 
+func getConnectivityMetrics() ([]Metric, error) {
+	ret := []Metric{}
+	ret = append(ret, generateMetric("connectivity", 1, "connectivity", "connectivity"))
+
+	return ret, nil
+}
+
 func getLoadMetrics() ([]Metric, error) {
 	loads, err := load.Avg()
 	if err != nil {
@@ -89,6 +96,23 @@ func getMemoryMetics() ([]Metric, error) {
 	ret[7] = generateMetric("memory", float64(metric.Wired), "memory", "memory.wired")
 	ret[8] = generateMetric("memory", float64(metric.Buffers), "memory", "memory.buffers")
 	ret[9] = generateMetric("memory", float64(metric.Cached), "memory", "memory.cached")
+
+	return ret, nil
+}
+
+func getSwapMetrics() ([]Metric, error) {
+	swap, err := mem.SwapMemory()
+	if err != nil {
+		return nil, err
+	}
+
+	ret := make([]Metric, 6)
+	ret[0] = generateMetric("swap", float64(swap.Total), "swap", "swap.total")
+	ret[1] = generateMetric("swap", float64(swap.Used), "swap", "swap.used")
+	ret[2] = generateMetric("swap", float64(swap.Free), "swap", "swap.free")
+	ret[3] = generateMetric("swap", float64(swap.UsedPercent), "swap", "swap.used_percent")
+	ret[4] = generateMetric("swap", float64(swap.Sin), "swap", "swap.sin")
+	ret[5] = generateMetric("swap", float64(swap.Sout), "swap", "swap.sout")
 
 	return ret, nil
 }

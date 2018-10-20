@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -21,48 +20,73 @@ func main() {
 		log.Fatal("YOU NEED TO SET `METRICS_API` AND `METRICS_TOKEN` AND `METRICS_NAMESPACE`")
 	}
 
+	payload, err := generatePayload()
+	if err != nil {
+		panic(err)
+	}
+	err = postMetric(payload)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func generatePayload() (string, error) {
 	metric := []Metric{}
+
+	con, err := getConnectivityMetrics()
+	if err == nil {
+		metric = append(metric, con...)
+	} else {
+		fmt.Printf("Error: Connectivity\n")
+	}
 
 	mem, err := getMemoryMetics()
 	if err == nil {
 		metric = append(metric, mem...)
 	} else {
-		fmt.Printf("Errror: %v", err)
+		fmt.Printf("Errror: Memory\n")
+	}
+
+	swap, err := getSwapMetrics()
+	if err == nil {
+		metric = append(metric, swap...)
+	} else {
+		fmt.Printf("Error: Swap\n")
 	}
 
 	cpu, err := getCPUMetrics()
 	if err == nil {
 		metric = append(metric, cpu...)
 	} else {
-		fmt.Printf("Errror: %v", err)
+		fmt.Printf("Errror: CPU\n")
 	}
 
 	disk, err := getDiskMetrics()
 	if err == nil {
 		metric = append(metric, disk...)
 	} else {
-		fmt.Printf("Errror: %v", err)
+		fmt.Printf("Errror: Disk\n")
 	}
 
 	load, err := getLoadMetrics()
 	if err == nil {
 		metric = append(metric, load...)
 	} else {
-		fmt.Printf("Errror: %v", err)
+		fmt.Printf("Errror: Load\n")
 	}
 
 	network, err := getNetworkMetrics()
 	if err == nil {
 		metric = append(metric, network...)
 	} else {
-		fmt.Printf("Errror: %v", err)
+		fmt.Printf("Errror: Network\n")
 	}
 
 	uptime, err := getUptime()
 	if err == nil {
 		metric = append(metric, uptime...)
 	} else {
-		fmt.Printf("Errror: %v", err)
+		fmt.Printf("Errror: Uptime\n")
 	}
 
 	data := &Payload{
@@ -72,10 +96,14 @@ func main() {
 
 	payload, err := json.Marshal(data)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	req, _ := http.NewRequest("POST", url, strings.NewReader(string(payload)))
+	return string(payload), nil
+}
+
+func postMetric(payload string) error {
+	req, _ := http.NewRequest("POST", url, strings.NewReader(payload))
 
 	req.Header.Add("x-api-key", token)
 	req.Header.Add("content-type", "application/json")
@@ -83,12 +111,9 @@ func main() {
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer res.Body.Close()
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(string(body))
+
+	return nil
 }
