@@ -16,7 +16,7 @@ type Metric struct {
 	Dimensions []Dimension `json:"Dimensions"`
 }
 
-// Dimension : dimention data
+// Dimension : dimension data
 type Dimension struct {
 	Name  string `json:"Name"`
 	Value string `json:"Value"`

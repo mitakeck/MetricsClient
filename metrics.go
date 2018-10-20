@@ -9,14 +9,14 @@ import (
 	"github.com/shirou/gopsutil/net"
 )
 
-func generateMetric(name string, value float64, dimension_name string, dimension_value string) Metric {
+func generateMetric(name string, value float64, dimensionname string, dimensionvalue string) Metric {
 	return Metric{
 		MetricName: name,
 		Value:      value,
 		Dimensions: []Dimension{
 			Dimension{
-				Name:  dimension_name,
-				Value: dimension_value,
+				Name:  dimensionname,
+				Value: dimensionvalue,
 			},
 		},
 	}
