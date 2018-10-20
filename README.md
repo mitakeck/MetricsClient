@@ -13,7 +13,15 @@ https://github.com/mitakeck/MetricsClient/releases/tag/v0.0.1
 ## Usage
 
 ```
-$ METRICS_API=htts://xxxxxxxx METRICS_TOKEN=xxxxxxx METRICS_NAMESPACE=xxxxxxxxxx MetricsClient
+$ METRICS_API="htts://xxxxxxxx" METRICS_TOKEN="xxxxxxx" METRICS_NAMESPACE="xxxxxxxxxx" MetricsClient
+```
+
+```
+$ export METRICS_API="htts://xxxxxxxx"
+$ export METRICS_TOKEN="xxxxxxx"
+$ export METRICS_NAMESPACE="xxxxxxxxxx"
+$
+$ MetricsClient
 ```
 
 
