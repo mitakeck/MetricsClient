@@ -7,7 +7,7 @@ MetricsClient
 
 ## Download
 
-https://github.com/mitakeck/MetricsClient/releases/tag/v0.0.3
+https://github.com/mitakeck/MetricsClient/releases/tag/v0.0.4
 
 
 ## Usage
@@ -28,6 +28,6 @@ $ MetricsClient
 ## Task
 
 - [x] add CircleCI conf
-- [ ] add connectivity param
-- [ ] add swap data param
+- [x] add connectivity param
+- [x] add swap data param
 - [ ] add cpu percentage param
