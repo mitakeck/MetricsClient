@@ -14,4 +14,5 @@ https://github.com/mitakeck/MetricsClient/releases/tag/v0.0.1
 
 - [x] add CircleCI conf
 - [ ] add connectivity param
-- [ ] add swap data
+- [ ] add swap data param
+- [ ] add cpu percentage param
