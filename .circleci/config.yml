@@ -27,4 +27,4 @@ jobs:
       - run: go get github.com/mitchellh/gox
       - run: go get github.com/tcnksm/ghr
       - run: gox -osarch "linux/amd64 linux/arm darwin/amd64" -output "dist/{{.Dir}}_{{.OS}}_{{.Arch}}"
-      - run: ghr -t ${GITHUB_API_TOKEN} -u ${USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --replace v0.0.1 dist/
+      - run: ghr -t ${GITHUB_API_TOKEN} -u ${USERNAME} -r ${CIRCLE_PROJECT_REPONAME} --replace v0.0.2 dist/

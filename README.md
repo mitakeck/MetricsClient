@@ -7,7 +7,7 @@ MetricsClient
 
 ## Download
 
-https://github.com/mitakeck/MetricsClient/releases/tag/v0.0.1
+https://github.com/mitakeck/MetricsClient/releases/tag/v0.0.2
 
 
 ## Usage
