@@ -21,40 +21,49 @@ func main() {
 		log.Fatal("YOU NEED TO SET `METRICS_API` AND `METRICS_TOKEN` AND `METRICS_NAMESPACE`")
 	}
 
+	metric := []Metric{}
+
 	mem, err := getMemoryMetics()
-	if err != nil {
-		panic(err)
+	if err == nil {
+		metric = append(metric, mem...)
+	} else {
+		fmt.Printf("Errror: %v", err)
 	}
 
 	cpu, err := getCPUMetrics()
-	if err != nil {
-		panic(err)
+	if err == nil {
+		metric = append(metric, cpu...)
+	} else {
+		fmt.Printf("Errror: %v", err)
 	}
-	metric := append(mem, cpu...)
 
 	disk, err := getDiskMetrics()
-	if err != nil {
-		panic(err)
+	if err == nil {
+		metric = append(metric, disk...)
+	} else {
+		fmt.Printf("Errror: %v", err)
 	}
-	metric = append(metric, disk...)
 
 	load, err := getLoadMetrics()
-	if err != nil {
-		panic(err)
+	if err == nil {
+		metric = append(metric, load...)
+	} else {
+		fmt.Printf("Errror: %v", err)
 	}
-	metric = append(metric, load...)
 
 	network, err := getNetworkMetrics()
-	if err != nil {
-		panic(err)
+	if err == nil {
+		metric = append(metric, network...)
+	} else {
+		fmt.Printf("Errror: %v", err)
 	}
-	metric = append(metric, network...)
 
 	uptime, err := getUptime()
-	if err != nil {
-		panic(err)
+	if err == nil {
+		metric = append(metric, uptime...)
+	} else {
+		fmt.Printf("Errror: %v", err)
 	}
-	metric = append(metric, uptime...)
 
 	data := &Payload{
 		Namespace: namespace,
@@ -77,10 +86,9 @@ func main() {
 		panic(err)
 	}
 	defer res.Body.Close()
-	_, err = ioutil.ReadAll(res.Body)
+	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println("done")
+	fmt.Println(string(body))
 }
