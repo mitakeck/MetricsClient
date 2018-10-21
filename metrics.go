@@ -1,6 +1,10 @@
 package main
 
 import (
+	"time"
+
+	osstascpu "github.com/mackerelio/go-osstat/cpu"
+
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/gopsutil/host"
@@ -75,6 +79,27 @@ func getCPUMetrics() ([]Metric, error) {
 		ret = append(ret, generateMetric("cpu", c.GuestNice, "cpu."+c.CPU, "cpu."+c.CPU+".guestnice"))
 		ret = append(ret, generateMetric("cpu", c.Stolen, "cpu."+c.CPU, "cpu."+c.CPU+".stolen"))
 	}
+
+	return ret, nil
+}
+
+func getCPUMetricsSummary() ([]Metric, error) {
+	before, err := osstascpu.Get()
+	if err != nil {
+		return nil, err
+	}
+	time.Sleep(time.Duration(1) * time.Second)
+	after, err := osstascpu.Get()
+	if err != nil {
+		return nil, err
+	}
+
+	total := float64(after.Total - before.Total)
+
+	ret := []Metric{}
+	ret = append(ret, generateMetric("cpu", float64(after.User-before.User)/total*100, "cpu.summary", "cpu.summary.user"))
+	ret = append(ret, generateMetric("cpu", float64(after.System-before.System)/total*100, "cpu.summary", "cpu.summary.system"))
+	ret = append(ret, generateMetric("cpu", float64(after.Idle-before.Idle)/total*100, "cpu.summary", "cpu.summary.idle"))
 
 	return ret, nil
 }

@@ -30,4 +30,4 @@ $ MetricsClient
 - [x] add CircleCI conf
 - [x] add connectivity param
 - [x] add swap data param
-- [ ] add cpu percentage param
+- [x] add cpu percentage param
