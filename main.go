@@ -37,14 +37,14 @@ func generatePayload() (string, error) {
 	if err == nil {
 		metric = append(metric, con...)
 	} else {
-		fmt.Printf("Error: Connectivity\n")
+		fmt.Printf("Eror: Connectivity\n")
 	}
 
 	mem, err := getMemoryMetics()
 	if err == nil {
 		metric = append(metric, mem...)
 	} else {
-		fmt.Printf("Errror: Memory\n")
+		fmt.Printf("Error: Memory\n")
 	}
 
 	swap, err := getSwapMetrics()
@@ -58,35 +58,42 @@ func generatePayload() (string, error) {
 	if err == nil {
 		metric = append(metric, cpu...)
 	} else {
-		fmt.Printf("Errror: CPU\n")
+		fmt.Printf("Error: CPU\n")
+	}
+
+	cpus, err := getCPUMetricsSummary()
+	if err == nil {
+		metric = append(metric, cpus...)
+	} else {
+		fmt.Printf("Error: CPU Summary\n")
 	}
 
 	disk, err := getDiskMetrics()
 	if err == nil {
 		metric = append(metric, disk...)
 	} else {
-		fmt.Printf("Errror: Disk\n")
+		fmt.Printf("Error: Disk\n")
 	}
 
 	load, err := getLoadMetrics()
 	if err == nil {
 		metric = append(metric, load...)
 	} else {
-		fmt.Printf("Errror: Load\n")
+		fmt.Printf("Error: Load\n")
 	}
 
 	network, err := getNetworkMetrics()
 	if err == nil {
 		metric = append(metric, network...)
 	} else {
-		fmt.Printf("Errror: Network\n")
+		fmt.Printf("Error: Network\n")
 	}
 
 	uptime, err := getUptime()
 	if err == nil {
 		metric = append(metric, uptime...)
 	} else {
-		fmt.Printf("Errror: Uptime\n")
+		fmt.Printf("Error: Uptime\n")
 	}
 
 	data := &Payload{

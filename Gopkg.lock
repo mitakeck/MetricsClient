@@ -21,6 +21,14 @@
   version = "v1.2.1"
 
 [[projects]]
+  branch = "master"
+  digest = "1:566b50d6211c241a1121645a72536f85b02fed691532cf63a3d87b72788b83c7"
+  name = "github.com/mackerelio/go-osstat"
+  packages = ["cpu"]
+  pruneopts = "UT"
+  revision = "b878220919ec72c742318b3a1ee9713e83fc215c"
+
+[[projects]]
   digest = "1:7b6faf64fc7c7110d86922c2826554735b69af45dbdb652334957ca53ab8f7f6"
   name = "github.com/shirou/gopsutil"
   packages = [
@@ -60,13 +68,13 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/mackerelio/go-osstat/cpu",
     "github.com/shirou/gopsutil/cpu",
     "github.com/shirou/gopsutil/disk",
     "github.com/shirou/gopsutil/host",
     "github.com/shirou/gopsutil/load",
     "github.com/shirou/gopsutil/mem",
     "github.com/shirou/gopsutil/net",
-    "github.com/shirou/w32",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
