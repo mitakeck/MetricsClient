@@ -5,9 +5,24 @@
 MetricsClient
 
 
-## Download
+## Install
 
-https://github.com/mitakeck/MetricsClient/releases/tag/v0.0.5
+### Install from source
+
+```
+$ go get github.com/mitakeck/MetricsClient
+$ dep ensure
+$ go build
+```
+
+### Install from binary
+
+Download from here https://github.com/mitakeck/MetricsClient/releases/tag/v0.0.5
+
+```
+$ mv MetricsClient_* /usr/local/bin/MetricsClient
+$ chmod +x /usr/local/bin/MetricsClient
+```
 
 
 ## Usage
@@ -24,6 +39,10 @@ $
 $ MetricsClient
 ```
 
+## Dependencies
+
+- github.com/mackerelio/go-osstat
+- github.com/shirou/gopsutil
 
 ## Task
 
