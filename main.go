@@ -3,10 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
+	"time"
+
+	"github.com/k0kubun/pp"
 )
 
 var (
@@ -24,13 +27,96 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	err = postMetric(payload)
+
+	// simple CPU/Memory usage check
+	needCheck := false
+	thCPU := 80.0
+	thMemoryUsage := 80.0
+
+	for _, d := range payload.Data {
+		name := d.Dimensions[0].Value
+		if name == "cpu.summary.user" || name == "cpu.summary.system" {
+			if thCPU < d.Value {
+				needCheck = true
+			}
+		}
+
+		if name == "memory.percent" {
+			if thMemoryUsage < d.Value  {
+				needCheck = true
+			}
+		}
+	}
+
+	if needCheck {
+		checkProcessList()
+	}
+
+	data, err := marshalPayload(payload)
+	if err != nil {
+		panic(err)
+	}
+
+	err = postMetric(data)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func generatePayload() (string, error) {
+func checkProcessList() error {
+	log("free", "")
+	log("ps", "aux")
+	log("slabtop", "-o")
+
+	return nil
+}
+
+func log(com string, opt string) error {
+	out, err := exec.Command(com, opt).Output()
+	if err != nil {
+		pp.Println(err)
+
+		return err
+	}
+
+	// timestamp 取得
+	timeStamp := getTimeStamp()
+
+	writeErr := write(timeStamp + "_" + com + ".log", string(out))
+	if writeErr != nil {
+		return writeErr
+	}
+
+	return nil
+}
+
+func getTimeStamp() string {
+	return fmt.Sprintf("%s", time.Now())
+}
+
+func write(filePath string, data string) error {
+	fp, err := os.Create(filePath)
+  if err != nil {
+      return err
+  }
+
+  defer fp.Close()
+
+  fp.WriteString(data)
+
+	return nil
+}
+
+func marshalPayload(data *Payload) (string, error) {
+	payload, err := json.Marshal(data)
+	if err != nil {
+		return "", err
+	}
+
+	return string(payload), nil
+}
+
+func generatePayload() (*Payload, error) {
 	metric := []Metric{}
 
 	con, err := getConnectivityMetrics()
@@ -101,12 +187,7 @@ func generatePayload() (string, error) {
 		Data:      metric,
 	}
 
-	payload, err := json.Marshal(data)
-	if err != nil {
-		return "", err
-	}
-
-	return string(payload), nil
+	return data, nil
 }
 
 func postMetric(payload string) error {

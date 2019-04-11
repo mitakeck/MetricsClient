@@ -4,39 +4,41 @@
 
 MetricsClient
 
-
 ## Install
 
 ### Install from source
 
-```
-$ go get github.com/mitakeck/MetricsClient
-$ dep ensure
-$ go build
+```bash
+#!/bin/bash
+go get github.com/mitakeck/MetricsClient
+dep ensure
+go build
 ```
 
 ### Install from binary
 
 Download from here https://github.com/mitakeck/MetricsClient/releases/tag/v0.0.5
 
+```bash
+#!/bin/bash
+mv MetricsClient_* /usr/local/bin/MetricsClient
+chmod +x /usr/local/bin/MetricsClient
 ```
-$ mv MetricsClient_* /usr/local/bin/MetricsClient
-$ chmod +x /usr/local/bin/MetricsClient
-```
-
 
 ## Usage
 
-```
-$ METRICS_API="htts://xxxxxxxx" METRICS_TOKEN="xxxxxxx" METRICS_NAMESPACE="xxxxxxxxxx" MetricsClient
+```bash
+#!/bin/bash
+METRICS_API="htts://xxxxxxxx" METRICS_TOKEN="xxxxxxx" METRICS_NAMESPACE="xxxxxxxxxx" MetricsClient
 ```
 
-```
-$ export METRICS_API="htts://xxxxxxxx"
-$ export METRICS_TOKEN="xxxxxxx"
-$ export METRICS_NAMESPACE="xxxxxxxxxx"
-$
-$ MetricsClient
+```bash
+#!/bin/bash
+export METRICS_API="htts://xxxxxxxx"
+export METRICS_TOKEN="xxxxxxx"
+export METRICS_NAMESPACE="xxxxxxxxxx"
+
+MetricsClient
 ```
 
 ## Dependencies
