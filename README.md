@@ -17,7 +17,7 @@ go build
 
 ### Install from binary
 
-Download from here https://github.com/mitakeck/MetricsClient/releases/tag/v0.0.5
+Download from here https://github.com/mitakeck/MetricsClient/releases/tag/v0.0.6
 
 ```bash
 #!/bin/bash
