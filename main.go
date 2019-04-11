@@ -3,13 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
 	"strings"
 	"time"
-
-	"github.com/k0kubun/pp"
 )
 
 var (
@@ -64,17 +63,16 @@ func main() {
 }
 
 func checkProcessList() error {
-	log("free", "")
-	log("ps", "aux")
-	log("slabtop", "-o")
+	logging("free", "")
+	logging("ps", "aux")
+	logging("slabtop", "-o")
 
 	return nil
 }
 
-func log(com string, opt string) error {
+func logging(com string, opt string) error {
 	out, err := exec.Command(com, opt).Output()
 	if err != nil {
-		pp.Println(err)
 
 		return err
 	}
